@@ -1,0 +1,1 @@
+export declare function fetchMainfest(urn: string): Promise<{}>;

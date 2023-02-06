@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# Build directories
+build/
+dist/
+
+# IDEs and editors
+.idea/
+.vscode/
+.DS_Store
+
+# Config files
+.env
+
+# Security
+.env.example
+.env.local
+
+# Git metadata
+.git/
+
+# Linting and testing
+.eslintrc.json
+.jshintrc
+.nyc_output/
+coverage/
+
+# Config files for yarn and npm
+yarn.lock
+package-lock.json
