@@ -1,6 +1,5 @@
 import {url} from "./setting";
 
-
 /**
  * Returns Price By API
  * @param {string} token
@@ -45,6 +44,22 @@ const fetchSubProject = async (token,subprojectid) => {
         .catch(error => console.log('error', error));
 }
 
+const createSubProject = async (token,data) => {
+var myHeaders = new Headers();
+myHeaders.append("Authorization", "Token "+token);
+myHeaders.append("Content-Type", "application/json");
+
+var raw = JSON.stringify(data);
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+};
+const res=await fetch(`${url}/bimmanage/api/subproject/`, requestOptions)
+
+return await res.json()
+}
 
 
-export {fetchSubProject, fetchSubProjects}
+export {fetchSubProject, fetchSubProjects,createSubProject}

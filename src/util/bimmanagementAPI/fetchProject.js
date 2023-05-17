@@ -1,4 +1,4 @@
-import {url} from "./setting";
+import {url,openaiurl} from "./setting";
 
 
 /**
@@ -10,7 +10,7 @@ import {url} from "./setting";
 const fetchProjects = async (token) => {
 
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Token "+token);
+    myHeaders.append("Authorization", "Token " + token);
 
     var formdata = new FormData();
 
@@ -27,10 +27,10 @@ const fetchProjects = async (token) => {
         })
         .catch(error => console.log('error', error));
 }
-const fetchProject = async (buildingid,token) => {
+const fetchProject = async (buildingid, token) => {
 
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Token "+token);
+    myHeaders.append("Authorization", "Token " + token);
 
     var formdata = new FormData();
 
@@ -48,10 +48,10 @@ const fetchProject = async (buildingid,token) => {
         .catch(error => console.log('error', error));
 }
 
-const addProjectTimeline = async (buildingid, task,token) => {
+const addProjectTimeline = async (buildingid, task, token) => {
 
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Token "+token);
+    myHeaders.append("Authorization", "Token " + token);
     myHeaders.append("Content-Type", "application/json");
     var requestOptions = {
         method: 'POST',
@@ -68,15 +68,15 @@ const addProjectTimeline = async (buildingid, task,token) => {
         })
         .catch(error => console.log('error', error));
 }
-const updateProjectTimeline = async (buildingid, task,token) => {
+const updateProjectTimeline = async (buildingid, task, token) => {
 
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Token "+token);
+    myHeaders.append("Authorization", "Token " + token);
     myHeaders.append("Content-Type", "application/json");
     var requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body:JSON.stringify(task)
+        body: JSON.stringify(task)
     };
     const _url = `${url}/bimmanage/api/project/${buildingid}/updateprojecttimeline/`
     console.log(_url)
@@ -87,12 +87,10 @@ const updateProjectTimeline = async (buildingid, task,token) => {
         })
         .catch(error => console.log('error', error));
 }
-
-
-const getProjectTimeline = async (buildingid,token) => {
+const getProjectTimeline = async (buildingid, token) => {
     console.log(token)
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Token "+token);
+    myHeaders.append("Authorization", "Token " + token);
     var requestOptions = {
         method: 'GET',
         headers: myHeaders,
@@ -106,5 +104,69 @@ const getProjectTimeline = async (buildingid,token) => {
         })
         .catch(error => console.log('error', error));
 }
+const createProject = async (token, data) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Token " + token);
+    myHeaders.append("Content-Type", "application/json");
 
-export {fetchProject, fetchProjects,addProjectTimeline,getProjectTimeline,updateProjectTimeline}
+    var raw = JSON.stringify(data);
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+    };
+    const res = await fetch(`${url}/bimmanage/api/project/`, requestOptions)
+
+    return await res.json()
+}
+const pdfAnalysis = async (prompt, context) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+        "prompt": prompt,
+        "context": context
+    });
+
+    const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw
+    };
+
+    const result = await fetch(`${openaiurl}/api/bigtextanalysis/pdfAnalysis/`, requestOptions)
+    if (result.ok) {
+        return await result.json()
+    } else {
+        return await result.text()
+    }
+
+
+}
+const pdfSummary = async (prompt, context) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+        "prompt": prompt,
+        "context": context
+    });
+
+    const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw
+    };
+
+    const result = await fetch(`${openaiurl}/api/bigtextanalysis/pdfSummary/`, requestOptions)
+    if (result.ok) {
+        return await result.json()
+    } else {
+        return await result.text()
+    }
+
+
+}
+
+export {pdfSummary,pdfAnalysis,fetchProject, fetchProjects, addProjectTimeline, getProjectTimeline, updateProjectTimeline, createProject}

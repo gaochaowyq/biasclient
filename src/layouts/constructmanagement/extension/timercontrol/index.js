@@ -1,8 +1,5 @@
 import './style.css'
-import React from 'react'
 import { createRoot } from 'react-dom/client';
-import MDSlider from "components/MDSlider";
-
 
 // *******************************************
 // Custom Properties Extension

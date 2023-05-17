@@ -1,8 +1,8 @@
 import fetchSpecificProperties from "./FetchSpecificProperties";
 import {fetchMainfest} from "./fetchMainfest";
 
-async function fetchBuildingElements(urn, modelid, isENU) {
-    const _mainfest = await fetchMainfest(urn);
+async function fetchBuildingElements(token, urn, modelid, isENU) {
+    const _mainfest = await fetchMainfest(token, urn);
     const queryEUN = {
         "query": {
             "$contains":
@@ -46,10 +46,10 @@ async function fetchBuildingElements(urn, modelid, isENU) {
         "payload": "text"
     }
     let query;
-    if (isENU){
-        query=queryEUN
-    }else {
-        query=queryCHS
+    if (isENU) {
+        query = queryEUN
+    } else {
+        query = queryCHS
     }
 
     let result = []
@@ -57,7 +57,8 @@ async function fetchBuildingElements(urn, modelid, isENU) {
 
     while (!isFinish) {
         let c;
-        c = await fetchSpecificProperties(urn, modelid, query)
+        c = await fetchSpecificProperties(token, urn, modelid, query)
+        console.log(c)
         if (c.data.collection.length === 0) {
             isFinish = true;
             break
@@ -71,4 +72,106 @@ async function fetchBuildingElements(urn, modelid, isENU) {
     return result
 }
 
-export default fetchBuildingElements;
+const fetchBuildingElmentsByCoder = async (token, urn, modelid, coder,offset=0) => {
+    const queryENU = {
+        "query": {
+            "$contains":
+                [
+                    "properties.Identity Data.Assembly Code",
+                    `${coder}`
+                ]
+        },
+        "fields": [
+            "objectid",
+            "name",
+            "properties.*"
+        ],
+        "pagination": {
+            "offset": offset,
+            "limit": 1000
+        },
+        "payload": "text"
+    }
+    const queryCHS = {
+        "query": {
+            "$contains":
+                [
+                    "properties.标识数据.部件代码",
+                    `${coder}`
+                ]
+        },
+        "fields": [
+            "objectid",
+            "name",
+            "properties.*"
+        ],
+        "pagination": {
+            "offset": offset,
+            "limit": 1000
+        },
+        "payload": "text"
+    }
+        let c;
+        try {
+            c = await fetchSpecificProperties(token, urn, modelid, queryCHS)
+        } catch (e) {
+            c = await fetchSpecificProperties(token, urn, modelid, queryENU)
+        }
+
+    return c.data.collection
+
+}
+
+
+const fetchBuildingCoders = async (token, urn, modelid) => {
+    const queryENU = {
+        "query": {
+            "$contains":
+                [
+                    "properties.Identity Data.Assembly Code",
+                    `${coder}`
+                ]
+        },
+        "fields": [
+            "objectid",
+            "name",
+            "properties.*"
+        ],
+        "pagination": {
+            "offset": offset,
+            "limit": 1000
+        },
+        "payload": "text"
+    }
+    const queryCHS = {
+        "query": {
+            "$contains":
+                [
+                    "properties.标识数据.部件代码",
+                    `${coder}`
+                ]
+        },
+        "fields": [
+            "objectid",
+            "name",
+            "properties.*"
+        ],
+        "pagination": {
+            "offset": offset,
+            "limit": 1000
+        },
+        "payload": "text"
+    }
+        let c;
+        try {
+            c = await fetchSpecificProperties(token, urn, modelid, queryCHS)
+        } catch (e) {
+            c = await fetchSpecificProperties(token, urn, modelid, queryENU)
+        }
+
+    return c.data.collection
+
+}
+
+
+export {fetchBuildingElements, fetchBuildingElmentsByCoder};

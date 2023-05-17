@@ -12,7 +12,7 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import regeneratorRuntime from "regenerator-runtime";
+
 import { useMemo, useEffect, useState } from "react";
 
 // prop-types is a library for typechecking of props
@@ -241,7 +241,7 @@ function DataTable({
           >
             {canPreviousPage && (
               <MDPagination item onClick={() => previousPage()}>
-                <Icon sx={{ fontWeight: "bold" }}>《</Icon>
+                <Icon sx={{ fontWeight: "bold" }}>chevron_left</Icon>
               </MDPagination>
             )}
             {renderPagination.length > 6 ? (
@@ -257,7 +257,7 @@ function DataTable({
             )}
             {canNextPage && (
               <MDPagination item onClick={() => nextPage()}>
-                <Icon sx={{ fontWeight: "bold" }}>》</Icon>
+                <Icon sx={{ fontWeight: "bold" }}>chevron_right</Icon>
               </MDPagination>
             )}
           </MDPagination>

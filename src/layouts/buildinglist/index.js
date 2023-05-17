@@ -12,15 +12,16 @@ import {fetchBuildings} from "util/bimmanagementAPI/fetchBuildings";
 // Data
 import buildingsTableData from "./data/buildingsTableData"
 import {useState, useEffect} from "react";
-import {useParams} from "react-router-dom";
+import {useParams,useNavigate} from "react-router-dom";
 import useToken from "../authentication/sign-in/components/useToken";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import DashboardLayout from "../../examples/LayoutContainers/DashboardLayout";
+import Button from "@mui/material/Button";
 
-function SubProjectsList() {
+function BuilidngList() {
     const {token, setToken} = useToken();
     const [buildings, setBuildings] = useState([]);
     const {id} = useParams();
+    const navigate=useNavigate()
 
     useEffect(() => {
         fetchBuildings(token, id).then(res => {
@@ -28,12 +29,19 @@ function SubProjectsList() {
         })
     }, []);
 
+    const CreateBuildingButton= ({id}) => {
+        return (
+            <Button onClick={()=>{navigate(`/createbuilding/${id}`)}}>
+                添加单项工程
+            </Button>
+        )
+    }
+
 
     const {columns: pColumns, rows: pRows} = buildingsTableData(buildings);
 
     return (
-        <DashboardLayout>
-            <DashboardNavbar/>
+        <DashboardLayout >
             <MDBox pt={6} pb={3}>
                 <Grid container spacing={6}>
                     <Grid item xs={12}>
@@ -53,6 +61,8 @@ function SubProjectsList() {
                                 </MDTypography>
                             </MDBox>
                             <MDBox pt={3}>
+                                <CreateBuildingButton id={id}/>
+
                                 <DataTable
                                     table={{columns: pColumns, rows: pRows}}
                                     isSorted={false}
@@ -66,8 +76,8 @@ function SubProjectsList() {
                 </Grid>
             </MDBox>
             <Footer/>
-        </DashboardLayout>
+        </DashboardLayout >
     );
 }
 
-export default SubProjectsList;
+export default BuilidngList;

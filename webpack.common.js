@@ -27,7 +27,7 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: [["@babel/preset-typescript"], ['@babel/preset-env', {targets: "defaults"}], ['@babel/preset-react', {runtime: "automatic"}], ["@babel/preset-flow"]],
-                        plugins: ["@babel/plugin-transform-spread"]
+                        plugins: ["@babel/plugin-transform-spread","@babel/plugin-proposal-private-methods"]
                     },
 
                 }
@@ -66,7 +66,8 @@ module.exports = {
         ]
     },
     experiments: {
-        topLevelAwait: false
+        topLevelAwait: false,
+        outputModule:true
     },
     devServer: {
         static: {

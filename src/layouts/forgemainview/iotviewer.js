@@ -1,7 +1,7 @@
 /**
 
  */
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef, useContext} from "react";
 import {useParams} from 'react-router-dom';
 import {styled} from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
@@ -10,11 +10,13 @@ import {useMaterialUIController, setMiniSidenav} from "context";
 import Footer from "../../examples/Footer";
 import DashboardLayout from "../../examples/LayoutContainers/DashboardLayout";
 import getAuth from "../../util/forgeAPI/getAuth";
-import fetchBuilding from "../../util/bimmanagementAPI/fetchBuilding";
+import {fetchBuilding} from "../../util/bimmanagementAPI/fetchBuildings";
+
 import BaseViewer from "./BaseViewer";
 import CustomProperityPanel from "./extensions/getProjectComment";
 import addProjectCommentExtension from "./extensions/addProjectComment";
 import DisplayByCoder from "./extensions/DisplayByCoder";
+import {authContext} from "../../context/AuthContext";
 
 
 const Item = styled(Paper)(({theme}) => ({
@@ -27,7 +29,7 @@ const Item = styled(Paper)(({theme}) => ({
 
 function ForgeIotView() {
     const [viewername, setViewer] = useState("{3D}");
-    const [token, setToken] = useState("");
+    const {token, admin} = useContext(authContext);
     const [controller, dispatch] = useMaterialUIController();
     const [urn, setUrn] = useState("");
     const {id} = useParams();
@@ -37,7 +39,7 @@ function ForgeIotView() {
             setToken(res);
             console.log(res)
         })
-        fetchBuilding(id).then(res => setUrn(res.info.uri_forge))
+        fetchBuilding(id,token).then(res => setUrn(res.info.uri_forge))
         setMiniSidenav(dispatch, true);
     }, []);
     var sensorStyleDefinitions = {

@@ -11,29 +11,43 @@ import {fetchProjects} from "util/bimmanagementAPI/fetchProject";
 
 // Data
 import projectsTableData from "./data/projectsTableData";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useContext} from "react";
 import useToken from "../authentication/sign-in/components/useToken";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import DashboardLayout from "../../examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import useAdmin from 'layouts/authentication/sign-in/components/useAdmin'
+import {authContext} from "context/AuthContext";
+import CreateProject from "./createproject/CreateProject";
+import {useNavigate} from "react-router-dom";
+import Button from "@mui/material/Button";
 
 function ProjectsList() {
-    const {token, setToken} = useToken();
     const [projects, setProjects] = useState([]);
-
+    const {token, admin} = useContext(authContext)
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchProjects(token).then(res => {
             setProjects(res);
-            console.log(res)
         })
     }, []);
 
 
     const {columns: pColumns, rows: pRows} = projectsTableData(projects);
 
+    const CreateProjectButton = () => {
+        return (
+            <Button onClick={() => {
+                navigate(`/createproject`)
+            }}>
+                添加建设项目
+            </Button>
+        )
+    }
+
+
     return (
         <DashboardLayout>
-            <DashboardNavbar/>
             <MDBox pt={6} pb={3}>
                 <Grid container spacing={6}>
                     <Grid item xs={12}>
@@ -53,12 +67,12 @@ function ProjectsList() {
                                 </MDTypography>
                             </MDBox>
                             <MDBox pt={3}>
+                                <CreateProjectButton/>
                                 <DataTable
                                     table={{columns: pColumns, rows: pRows}}
                                     isSorted={false}
-                                    entriesPerPage={false}
+                                    entriesPerPage={true}
                                     showTotalEntries={false}
-                                    noEndBorder
                                 />
                             </MDBox>
                         </Card>

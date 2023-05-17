@@ -1,18 +1,21 @@
 /**
 
-*/
+ */
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import App from "./App";
-import { MaterialUIControllerProvider } from "context";
+import {MaterialUIControllerProvider} from "context";
+import {AuthProvider} from "./context/AuthContext";
 
 ReactDOM.createRoot(
-  document.getElementById('root')
+    document.getElementById('root')
 ).render(
-  <BrowserRouter>
-    <MaterialUIControllerProvider>
-      <App />
-    </MaterialUIControllerProvider>
-  </BrowserRouter>
-    ,);
+    <BrowserRouter>
+        <MaterialUIControllerProvider>
+            <AuthProvider>
+                <App/>
+            </AuthProvider>
+        </MaterialUIControllerProvider>
+    </BrowserRouter>
+    );

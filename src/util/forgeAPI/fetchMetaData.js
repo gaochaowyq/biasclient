@@ -1,9 +1,8 @@
 import getAuth from "./getAuth";
 
-const fetchMetaData = async (urn) => {
-    let token = await getAuth()
+const fetchMetaData = async (token,urn) => {
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + token);
+    myHeaders.append("Authorization", token);
 
     var requestOptions = {
         method: 'GET',
@@ -12,10 +11,15 @@ const fetchMetaData = async (urn) => {
     };
     let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata`
 
-    return await fetch(url, requestOptions)
-        .then(response => response.json())
-        .then(response => response.data.metadata)
-        .catch(error => console.log('error', error));
+    const _result=await fetch(url, requestOptions);
+
+    if (_result.ok){
+        return await _result.json();
+    }
+    else {
+        console.log(await _result.text())
+        throw new Error("fetchMetaData fail")
+    }
 }
 
 export default fetchMetaData;

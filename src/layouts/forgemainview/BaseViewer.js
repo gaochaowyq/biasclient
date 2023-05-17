@@ -89,16 +89,16 @@ const BaseViewer = (props) => {
                 alignment: MultipleModelAlignmentType.ShareCoordinates
             };
             console.log("get models")
-            console.log(models)
-            console.log(props.token)
+            //console.log(models)
+            //console.log(props.token)
             util.processModels(models).then(
                 res=>{
+                    //console.log(res)
                     let viewerDocument=res[0].model.getDocumentNode().getDocument()
                     let defaultModelRoot=viewerDocument.getRoot()
                     let sheet_node = defaultModelRoot.search(Autodesk.Viewing.BubbleNode.SHEET_NODE);
                     setViewerDocument(viewerDocument)
                     setSheetNodes(sheet_node)
-
                 }
             )
 
@@ -156,10 +156,9 @@ const BaseViewer = (props) => {
                         </MDBox>
                         <MDBox borderRadius="lg"
                                coloredShadow="info"
-                               height={600}
                         >
                             <div className={"ForegeViewer"} ref={forgeViewerRef}
-                                 style={{position: "relative", height: "100%", width: "auto"}}>
+                                 style={{position: "relative", height: "90vh", width: "auto"}}>
                             </div>
 
                         </MDBox>
@@ -184,14 +183,14 @@ const BaseViewer = (props) => {
                         </MDBox>
                         <MDBox borderRadius="lg"
                                coloredShadow="info"
-                               height={800}
+                               height={"90vh"}
                         >
-                            <Paper style={{maxHeight: 600, overflow: 'auto'}}>
+                            <Paper>
                                 <TreeView
                                     aria-label="plan drawing navigator"
                                     defaultCollapseIcon={<ExpandMoreIcon/>}
                                     defaultExpandIcon={<ChevronRightIcon/>}
-                                    sx={{height: 600, flexGrow: 1, overflowY: 'auto'}}
+                                    sx={{ flexGrow: 1, overflowY: 'auto'}}
                                 >
                                     <TreeItem nodeId="A1" label="建筑专业">
                                         {sheetNodes.filter((element) => {

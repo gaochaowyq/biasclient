@@ -2,52 +2,37 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import {useState, useEffect, useMemo} from "react";
+import {useState, useEffect, useMemo, useContext} from "react";
 
 // react-router components
 import {Routes, Route, Navigate, useLocation} from "react-router-dom";
-
 // @mui material components
 import {ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Icon from "@mui/material/Icon";
-
 // Material Dashboard 2 React components
 import MDBox from "./components/MDBox";
-
 // Material Dashboard 2 React example components
 import Sidenav from "examples/Sidenav";
 import Configurator from "examples/Configurator";
-
 // Material Dashboard 2 React themes
 import theme from "assets/theme";
 import themeRTL from "assets/theme/theme-rtl";
-
 // Material Dashboard 2 React Dark Mode themes
 import themeDark from "assets/theme-dark";
 import themeDarkRTL from "assets/theme-dark/theme-rtl";
-
 // RTL plugins
 import rtlPlugin from "stylis-plugin-rtl";
 import {CacheProvider} from "@emotion/react";
 import createCache from "@emotion/cache";
-
 // Material Dashboard 2 React routes
 import routes from "routes";
-
 // Material Dashboard 2 React contexts
 import {useMaterialUIController, setMiniSidenav, setOpenConfigurator} from "context";
-
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
-import useToken from "./layouts/authentication/sign-in/components/useToken";
-import BLogin from "./layouts/authentication/sign-in";
-import BSignUp from "./layouts/authentication/sign-up";
-
-
-import ProjectTables from "./layouts/tables";
-
+import PrivateRoute from "./PrivateRote";
 export default function app() {
     const [controller, dispatch] = useMaterialUIController();
     const {
@@ -63,7 +48,6 @@ export default function app() {
     const [onMouseEnter, setOnMouseEnter] = useState(false);
     const [rtlCache, setRtlCache] = useState(null);
     const {pathname} = useLocation();
-    const {token, setToken} = useToken();
     // Cache for the rtl
     useMemo(() => {
         const cacheRtl = createCache({
@@ -109,11 +93,15 @@ export default function app() {
             if (route.collapse) {
                 return getRoutes(route.collapse);
             }
-
             if (route.route) {
-                return <Route exact path={route.route} element={route.component} key={route.key}/>;
+                if (route.auth) {
+                    return <Route path={route.route} element={<PrivateRoute>{route.component}</PrivateRoute>}
+                                  key={route.key}/>
+                }
+                else {
+                    return <Route path={route.route} element={route.component} key={route.key}/>
+                }
             }
-
             return null;
         });
 
@@ -140,36 +128,15 @@ export default function app() {
             </Icon>
         </MDBox>
     );
-
-    if (pathname==="/authentication/sign-up"){
-        console.log("badd")
-                return (
-            <ThemeProvider theme={darkMode ? themeDark : theme}>
-                <CssBaseline/>
-                <BSignUp/>
-            </ThemeProvider>
-        )
-    }
-
-    if (!token)
-    {
-        console.log(pathname)
-        return (
-            <ThemeProvider theme={darkMode ? themeDark : theme}>
-                <CssBaseline/>
-                <BLogin setToken={setToken}/>
-            </ThemeProvider>
-        )
-    }
     if (layout === 'main') {
         return (
             <>
                 <ThemeProvider theme={darkMode ? themeDark : theme}>
                     <CssBaseline/>
-                    <ProjectTables/>
+                    {/*<ProjectTables/>*/}
+
                 </ThemeProvider>
                 <Routes>
-                    {getRoutes(routes)}
                 </Routes>
             </>
 
@@ -196,8 +163,6 @@ export default function app() {
                 )}
                 {layout === "vr" && <Configurator/>}
                 <Routes>
-                    {getRoutes(routes)}
-                    <Route path="*" element={<Navigate to="/pricecal"/>}/>
                 </Routes>
             </ThemeProvider>
         </CacheProvider>
@@ -214,14 +179,15 @@ export default function app() {
                         onMouseEnter={handleOnMouseEnter}
                         onMouseLeave={handleOnMouseLeave}
                     />
+                    {/*
                     <Configurator/>
-                    {configsButton}
+                    {configsButton}*/}
                 </>
             )}
+
             {layout === "vr" && <Configurator/>}
             <Routes>
                 {getRoutes(routes)}
-                <Route path="*" element={<Navigate to="/projecttable"/>}/>
             </Routes>
         </ThemeProvider>
     );

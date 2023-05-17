@@ -11,16 +11,18 @@ import {fetchSubProjects} from "util/bimmanagementAPI/fetchSubProject";
 
 // Data
 import subprojectsTableData from "./data/subprojectsTableData";
-import {useState, useEffect} from "react";
-import {useParams} from "react-router-dom";
-import useToken from "../authentication/sign-in/components/useToken";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import {useState, useEffect, useContext} from "react";
+import {useParams,useNavigate} from "react-router-dom";
+import DashboardLayout from "../../examples/LayoutContainers/DashboardLayout";
+import {authContext} from "context/AuthContext";
+import Button from "@mui/material/Button";
 
 function SubProjectsList() {
-    const {token, setToken} = useToken();
+    const {token,admin}= useContext(authContext)
+
     const [subprojects, setSubProjects] = useState([]);
     const {id} = useParams();
+    const navigate=useNavigate()
 
 
     useEffect(() => {
@@ -30,12 +32,19 @@ function SubProjectsList() {
         })
     }, []);
 
+    const CreateSubProjectButton= ({id}) => {
+        return (
+            <Button onClick={()=>{navigate(`/createsubproject/${id}`)}}>
+                添加单位工程
+            </Button>
+        )
+    }
+
 
     const {columns: pColumns, rows: pRows} = subprojectsTableData(subprojects);
 
     return (
         <DashboardLayout>
-            <DashboardNavbar/>
             <MDBox pt={6} pb={3}>
                 <Grid container spacing={6}>
                     <Grid item xs={12}>
@@ -55,6 +64,7 @@ function SubProjectsList() {
                                 </MDTypography>
                             </MDBox>
                             <MDBox pt={3}>
+                                <CreateSubProjectButton id={id}/>
                                 <DataTable
                                     table={{columns: pColumns, rows: pRows}}
                                     isSorted={false}

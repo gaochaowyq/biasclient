@@ -1,35 +1,27 @@
 const path = require("path");
 const common = require("./webpack.common");
-const merge = require("webpack-merge");
+const {merge} = require('webpack-merge');
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
-  mode: "development",
-  output: {
-    filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist")
-  },
+    mode: "development",
+    output: {
+        filename: "[name].bundle_dev_v1.js",
+        path: path.resolve(__dirname, "dist"),
+        publicPath: '/',
+        module: true
+    },
 
-  module: {
-    rules: [
-      {
-        test: /\.scss$/,
-        use: [
-          "style-loader", //3. Inject styles into DOM
-          "css-loader", //2. Turns css into commonjs
-          "sass-loader" //1. Turns sass into css
+    module: {
+        rules: [
+            {
+                test: /\.scss$/,
+                use: [
+                    "style-loader", //3. Inject styles into DOM
+                    "css-loader", //2. Turns css into commonjs
+                    "sass-loader" //1. Turns sass into css
+                ]
+            }
         ]
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-            loader: 'babel-loader',
-            options: {
-                presets: [['@babel/preset-env',{ targets: "defaults" }], ['@babel/preset-react',{runtime:"automatic"}]]
-                }
-        }
-        }
-    ]
-  }
+    }
 });

@@ -3,17 +3,20 @@ import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-
+import {useContext} from "react";
+import {authContext} from "context/AuthContext";
 // Images
 export default function projectsTableData(projects) {
-
+    const {admin} = useContext(authContext)
+    const isadmin = admin.admin;
+    const navigate = useNavigate();
     const Projectname = ({name}) => (
         <Box display="flex" alignItems="center" lineHeight={1}>
             {name}
         </Box>
     );
     const ProjectEnter = ({id}) => {
-        const navigate = useNavigate();
+
         const navigateToSubProject = () => {
             navigate(`/subprojectlist/${id}`);
         };
@@ -23,20 +26,22 @@ export default function projectsTableData(projects) {
             </Button>
         )
     }
-    const ProjectAdd = () => {
-        const projectAdd =()=>{}
+
+        const ProjectManage = ({id}) => {
+
+        const navigateToProjectManage = () => {
+            navigate(`/taskmanager/${id}`);
+        };
         return (
-            <Button onClick={projectAdd}>
-                添加项目
+            <Button onClick={navigateToProjectManage}>
+                全过程管理
             </Button>
         )
     }
-        const Project_Modify = (id) => {
+
+    const Project_Modify = (id) => {
         return (
             <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                <ListItem alignItems="flex-start">
-                    <ProjectAdd id={id}/>
-                </ListItem>
                 <ListItem alignItems="flex-start">
                     <ProjectModify id={id}/>
                 </ListItem>
@@ -66,7 +71,7 @@ export default function projectsTableData(projects) {
         )
     }
     const CreateData = (date) => {
-        const _data=new Date(date);
+        const _data = new Date(date);
         return (
             `${_data.getFullYear()}年:${_data.getMonth()}月:${_data.getDay()}日`
         )
@@ -77,36 +82,63 @@ export default function projectsTableData(projects) {
             {Header: "项目名称", accessor: "name", width: "30%", align: "left"},
             {Header: "项目类型", accessor: "type", align: "left"},
             {Header: "项目阶段", accessor: "status", align: "center"},
-            {Header: "进入项目", accessor: "projectenter", align: "center"},
+            {Header: "模型与图纸管理", accessor: "projectenter", align: "center"},
+            {Header: "全过程文档管理", accessor: "projectmanage", align: "center"},
             {Header: "项目修改", accessor: "projectmodify", align: "center"},
             {Header: "时间", accessor: "createdata", align: "center"}
         ],
 
         rows: projects.map(item => {
-            return {
-                name: <Projectname name={item.name}/>,
-                type: (
-                    <div>
-                        {item.info.type}
-                    </div>),
-                status: (
-                    <div>
-                        {item.info.status}
-                    </div>),
-                projectenter: (
-                    <div>
-                        <ProjectEnter id={item.id}/>
-                    </div>),
-                projectmodify: (
-                    <div>
-                        <Project_Modify id={item.id}/>
-                    </div>),
-                createdata: (
-                    <div>
-                        {CreateData(item.createdata)}
-                    </div>
-                )
-            }
+            return (isadmin ?
+                    {
+                        name: <Projectname name={item.name}/>,
+                        type: (
+                            <div>
+                                {item.info.type}
+                            </div>),
+                        status: (
+                            <div>
+                                {item.info.status}
+                            </div>),
+                        projectenter: (
+                            <div>
+                                <ProjectEnter id={item.id}/>
+                            </div>),
+                        projectmanage: (
+                            <div>
+                                <ProjectManage id={item.id}/>
+                            </div>),
+                        projectmodify: (
+                            <div>
+                                <Project_Modify id={item.id}/>
+                            </div>),
+                        createdata: (
+                            <div>
+                                {CreateData(item.createdata)}
+                            </div>
+                        )
+                    } :
+                    {
+                        name: <Projectname name={item.name}/>,
+                        type: (
+                            <div>
+                                {item.info.type}
+                            </div>),
+                        status: (
+                            <div>
+                                {item.info.status}
+                            </div>),
+                        projectenter: (
+                            <div>
+                                <ProjectEnter id={item.id}/>
+                            </div>),
+                        createdata: (
+                            <div>
+                                {CreateData(item.createdata)}
+                            </div>
+                        )
+                    }
+            )
         })
 
 

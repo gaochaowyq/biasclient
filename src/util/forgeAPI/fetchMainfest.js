@@ -1,23 +1,24 @@
-import getAuth from "./getAuth";
 
 /// <reference path="fetchMainfest.d.ts" />
-const fetchMainfest= async (urn)=>
-{
-    let token=await getAuth()
+const fetchMainfest = async (token,urn) => {
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer "+token);
+    myHeaders.append("Authorization", token);
 
     var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-        credentials: "omit",
+        method: 'GET',
+        headers: myHeaders,
+        //credentials: "omit",
     };
-    let url=`https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest`
+    let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest`
+    const _result = await fetch(url, requestOptions)
+    if (_result.ok) {
 
-    return  await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(response=>response)
-      .catch(error => console.log('error', error));
+        return await _result.json();
+
+    }
+    else {
+        return await _result.text();
+    }
+
 }
-
-export {fetchMainfest};
+export {fetchMainfest}

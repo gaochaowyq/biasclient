@@ -6,8 +6,8 @@ const useForgeToken = () => {
         return forgeToken ? forgeToken : null
     };
     const [forgetoken, setForgeToken] = useState(getForgeToken());
-    console.log("get forge auth")
     if (forgetoken!==undefined && forgetoken){
+        console.log("get forge token")
         return  forgetoken
     }
     else {
@@ -15,6 +15,7 @@ const useForgeToken = () => {
             res=>{
                 sessionStorage.setItem('forgetoken', res);
                 setTimeout(function() { sessionStorage.removeItem('forgetoken'); }, (10*1000));
+                console.log("set forge token")
                 setForgeToken(res);
                 return res
             }

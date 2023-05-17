@@ -1,1 +1,1 @@
-export declare function fetchMainfest(urn: string): Promise<{}>;
+export declare function fetchMainfest(token:string,urn: string): any;

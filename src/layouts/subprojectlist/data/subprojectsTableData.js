@@ -3,19 +3,21 @@ import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import {useContext} from "react";
+import {authContext} from "context/AuthContext";
 
 // Images
 export default function subprojectsTableData(subprojects) {
-
+    const {admin} = useContext(authContext)
+    const isadmin = admin.admin;
+    const navigate = useNavigate();
     const SubProjectname = ({name}) => (
         <Box display="flex" alignItems="center" lineHeight={1}>
             {name}
         </Box>
     );
     const SubProjectEnter = ({id}) => {
-        const navigate = useNavigate();
         const navigateToBuilding = () => {
-            console.log(id)
             navigate(`/buildinglist/${id}`);
         };
         return (
@@ -24,14 +26,7 @@ export default function subprojectsTableData(subprojects) {
             </Button>
         )
     }
-    const SubProjectAdd = () => {
-        const SubprojectAdd =()=>{}
-        return (
-            <Button onClick={SubprojectAdd}>
-                添加子项工程
-            </Button>
-        )
-    }
+
     const SubProjectModify = (id) => {
         const ProjectModify = () => {
         };
@@ -55,9 +50,6 @@ export default function subprojectsTableData(subprojects) {
         return (
             <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
                 <ListItem alignItems="flex-start">
-                    <SubProjectAdd id={id}/>
-                </ListItem>
-                <ListItem alignItems="flex-start">
                     <SubProjectModify id={id}/>
                 </ListItem>
                 <ListItem alignItems="flex-start">
@@ -68,7 +60,7 @@ export default function subprojectsTableData(subprojects) {
     }
 
     const CreateData = (date) => {
-        const _data=new Date(date);
+        const _data = new Date(date);
         return (
             `${_data.getFullYear()}年:${_data.getMonth()}月:${_data.getDay()}日`
         )
@@ -84,22 +76,34 @@ export default function subprojectsTableData(subprojects) {
         ],
 
         rows: subprojects.map(item => {
-            return {
-                name: <SubProjectname name={item.name}/>,
-                subprojectenter: (
-                    <div>
-                        <SubProjectEnter id={item.id}/>
-                    </div>),
-                subprojectmodify: (
-                    <div>
-                        <SubProject_Modify id={item.id}/>
-                    </div>),
-                createdata: (
-                    <div>
-                        {CreateData(item.createdata)}
-                    </div>
-                )
-            }
+            return (isadmin ? {
+                    name: <SubProjectname name={item.name}/>,
+                    subprojectenter: (
+                        <div>
+                            <SubProjectEnter id={item.id}/>
+                        </div>),
+                    subprojectmodify: (
+                        <div>
+                            <SubProject_Modify id={item.id}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                } : {
+                    name: <SubProjectname name={item.name}/>,
+                    subprojectenter: (
+                        <div>
+                            <SubProjectEnter id={item.id}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                }
+            )
         })
 
 

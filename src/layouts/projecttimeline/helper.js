@@ -1,6 +1,6 @@
 import {AddDays} from "calculate-date";
 import {getProjectTimeline, addProjectTimeline} from "util/bimmanagementAPI/fetchProject";
-
+import {listmaintask} from "../../util/bimmanagementAPI/TaskManagement/taskmanagement";
 export function initTasks() {
     const currentDate = new Date();
     const startData = new Date(2022, 11, 14)
@@ -135,6 +135,26 @@ export async function getTask(buildingid, token) {
         }
     });
 }
+
+export async function getTaskByDB(projectid, token) {
+
+    let plan = await listmaintask(projectid)
+    return await plan.map((element) => {
+        return {
+            start: new Date(element.createddate),
+            end: new Date(element.plandate),
+            name: element.taskname,
+            id: element.id,
+            progress: 0,
+            dependencies: element.dependencies,
+            type: element.type,
+            project: element.project,
+            hideChildren: element.hideChildren,
+            displayOrder: element.displayOrder
+        }
+    });
+}
+
 
 export async function addTask(buildingid, newtask, token) {
     let plan = await addProjectTimeline(buildingid, newtask, token)

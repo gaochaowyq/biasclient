@@ -16,7 +16,7 @@ const fetchFrogeToken=async()=>{
 
     return await fetch(_url, requestOptions)
       .then(response => response.json())
-      .then(result => {console.log(result); return result})
+      .then(result => {return result})
       .catch(error => console.log('error', error));
 }
 export default fetchFrogeToken

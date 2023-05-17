@@ -1,47 +1,39 @@
-/**
- =========================================================
- * Material Dashboard 2 React - v2.1.0
- =========================================================
-
- * Product Page: https://www.creative-tim.com/product/material-dashboard-react
- * Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
- Coded by www.creative-tim.com
-
- =========================================================
-
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- */
-
 // @mui material components
 import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Footer from "examples/Footer";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import BIMelementsview from "./components/bimelementcomponent";
-import getAuth from "util/forgeAPI/getAuth";
+import FunPageLayout from "../../examples/LayoutContainers/FunPageLayout";
+import BIMelementsview from "./components/BIMelementsview";
 import {useParams} from "react-router-dom";
+import {authContext} from "../../context/AuthContext";
+import CategoryCoder from "../../component/CategoryCoder";
+
 function PriceCal() {
-    const [token, setToken] = useState("");
+    const {token, admin} = useContext(authContext);
+    const [coder,setCoder]=useState("14-10.20.18");
     const {id} = useParams();
-
-    useEffect(() => {
-        getAuth().then(res=>{setToken(res);})
-    },[]);
-
+    const CategoryCallBack=(e,nodeid)=>{
+        setCoder(nodeid)
+    }
 
     return (
-        <DashboardLayout>
-            <DashboardNavbar/>
-            <MDBox pt={1} height={1000}>
-               <BIMelementsview buildingid={id}/>
-            </MDBox>
+        <FunPageLayout>
+
+            <Grid container spacing={3} sx={{height: "90vh"}}>
+                <Grid item xs={6} md={6} lg={3}>
+                    <CategoryCoder codernumber={14} CallBack={CategoryCallBack}/>
+                </Grid>
+                <Grid item xs={6} md={6} lg={9}>
+                    <BIMelementsview buildingid={id} coder={coder}/>
+
+                </Grid>
+            </Grid>
+
             <Footer/>
-        </DashboardLayout>
+        </FunPageLayout>
     );
 }
 

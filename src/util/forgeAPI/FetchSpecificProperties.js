@@ -1,9 +1,9 @@
-import getAuth from "./getAuth";
 
-const FetchSpecificProperties = async (urn, modelid, query) => {
-    let token = await getAuth()
+const FetchSpecificProperties = async (token,urn, modelid, query) => {
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + token);
+
+    console.log(token,urn,modelid,query)
+    myHeaders.append("Authorization", token);
     //myHeaders.append("x-ads-derivative-format", "latest");
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify(
@@ -14,18 +14,16 @@ const FetchSpecificProperties = async (urn, modelid, query) => {
         method: 'POST',
         headers: myHeaders,
         body: raw,
-        credentials: 'omit',
     };
-    let url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${modelid}/properties:query`
-    return await fetch(url, requestOptions)
-        .then(response => {
-            return response.ok ? response.json() : {data: {collection: []}}
-        })
-        .catch(error => {
-            console.log('error', error.toString());
-            return {}
-        });
+    const url = `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/metadata/${modelid}/properties:query`
 
+    const _result=await fetch(url, requestOptions)
+
+    if (_result.ok){
+        return await _result.json()
+    }
+    else {
+        throw new Error("FetchSpecificProperties fail")
+    }
 }
-
 export default FetchSpecificProperties;

@@ -1,36 +1,22 @@
-import fetchPrice from "../bimmanagementAPI/fetchPrice";
-import fetchMetaData from "../forgeAPI/fetchMetaData";
-import fetchBuildingElements from "../forgeAPI/fetchBuildingElements";
-import parasePriceCoder from "../forgeAPI/parasePriceCoder";
-import {combineElement} from "../helper";
+import fetchPrice from "../../../util/bimmanagementAPI/fetchPrice";
+import fetchMetaData from "../../../util/forgeAPI/fetchMetaData";
+import {fetchBuildingElmentsByCoder} from "../../../util/forgeAPI/fetchBuildingElements";
+import parasePriceCoder from "../../../util/forgeAPI/parasePriceCoder";
+import {combineElement} from "../../../util/helper";
 
-async function bimelements(urn,limit=null) {
-
-    let buildingdata = await fetchMetaData(urn)
-        .then(result => {
-            var p=result.find((_e) => _e.isMasterView === true)
-            var pp=result.find((_e) => _e.role === "3d")
-            if(p){
-                return p
-            }
-            else {
-                return pp
-            }
-
-        })
-        .then(res => {
-            if (res.name==="New Construction"){return fetchBuildingElements(urn, res.guid,true)}
-            else {return fetchBuildingElements(urn, res.guid,false)}
-        })
-        .catch(error => console.log('error', error.toString()))
+async function _bimelements(token, urn, limit = null) {
+    const _metadata = await fetchMetaData(token, urn)
+    const metadata = _metadata.data.metadata.find((_e) => _e.role === "3d")
+    const buildingdata = await fetchBuildingElmentsByCoder(token, urn, metadata.guid, "14-10.20.18", 0)
     let result = {
-        dimensions: ['id','ElementName', 'mcoder', 'coder', 'MaterialName', 'quality', 'unit', 'price'],
+        dimensions: ['id', 'ElementName', 'mcoder', 'coder', 'MaterialName', 'quality', 'unit', 'price'],
         source: []
     }
     var out = [];
 
     //use to save price data
-    let index=0;
+    let index = 0;
+    /*
     for (var element of buildingdata) {
         let mcoder, coder;
         let name, value, unit, bprice;
@@ -46,7 +32,7 @@ async function bimelements(urn,limit=null) {
             continue
         }
         let elementsource = {
-            id:index,
+            id: index,
             ElementName: name,
             mcoder: mcoder,
             coder: coder,
@@ -98,14 +84,54 @@ async function bimelements(urn,limit=null) {
         }
         result.source.push(elementsource)
         index++
-        if (limit &&index>limit)break
+        if (limit && index > limit) break
     }
-
+    */
     //var dataframe=new DataFrame(result)
 
+    return {
+        columns: [
+            {Header: "子项目名称", accessor: "name", width: "30%", align: "left"},
+            {Header: "项目类型", accessor: "type", align: "left"},
+            {Header: "进入项目", accessor: "subprojectenter", align: "center"},
+            {Header: "修改子项目", accessor: "subprojectmodify", align: "center"},
+            {Header: "创建时间", accessor: "createdata", align: "center"}
+        ],
 
-    result.source = combineElement(result.source, "ElementName", ["quality", "price"])
-    return result;
+        rows: subprojects.map(item => {
+            return (isadmin ? {
+                    name: <SubProjectname name={item.name}/>,
+                    subprojectenter: (
+                        <div>
+                            <SubProjectEnter id={item.id}/>
+                        </div>),
+                    subprojectmodify: (
+                        <div>
+                            <SubProject_Modify id={item.id}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                } : {
+                    name: <SubProjectname name={item.name}/>,
+                    subprojectenter: (
+                        <div>
+                            <SubProjectEnter id={item.id}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                }
+            )
+        })
+
+
+    };
+
+
+    //result.source = combineElement(result.source, "ElementName", ["quality", "price"])
 }
-
-export default bimelements

@@ -4,22 +4,49 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import {useNavigate} from 'react-router-dom';
+import {useContext, useState} from "react";
+import {authContext} from "context/AuthContext";
+import useForgeToken from "util/forgeAPI/useForgeToken"
+import {fetchMainfest} from "../../../util/forgeAPI/fetchMainfest";
 
 // Images
 export default function buildingsTableData(buildings) {
+    const {admin} = useContext(authContext)
+    const [ishovered, setIsHovered] = useState(false);
+    const isadmin = admin.admin;
+    const forgetoken = useForgeToken();
+    const navigate = useNavigate();
+
 
     const Buildingname = ({name}) => (
         <Box display="flex" alignItems="center" lineHeight={1}>
             {name}
         </Box>
     );
-    const BuildingEnter = ({id}) => {
-        const navigate = useNavigate();
+    const BuildingEnter = ({id, isactive}) => {
         const navigateToBuilding = () => {
-            navigate(`/forgemainview/${id}`);
+            const build = buildings.find((item) => {
+                if (item.id === id) return item
+            })
+            const uri = build.info.uri_forge
+            fetchMainfest(forgetoken, uri).then(
+                res => {
+                    if (res.status==='success'){
+                        navigate(`/forgemainview/${id}`);
+
+                    }
+                    else
+                    {
+                        alert(`文件正在转换中，${res.progress}请稍等`)
+                    }
+                }
+            )
+
+
+
         };
         return (
-            <Button onClick={navigateToBuilding}>
+            <Button disabled={isactive} onClick={navigateToBuilding}>
                 查看分项工程
             </Button>
         )
@@ -27,9 +54,6 @@ export default function buildingsTableData(buildings) {
     const Building_Modify = ({id}) => {
         return (
             <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-                <ListItem alignItems="flex-start">
-                    <BuildingAdd id={id}/>
-                </ListItem>
                 <ListItem alignItems="flex-start">
                     <BuildingModify id={id}/>
                 </ListItem>
@@ -40,21 +64,12 @@ export default function buildingsTableData(buildings) {
         )
     }
 
-    const BuildingAdd = () => {
-        const BuildingAdd = () => {
-        }
+    const BuildingModify = ({id}) => {
         return (
-            <Button onClick={BuildingAdd}>
-                添加分项工程
-            </Button>
-        )
-    }
-    const BuildingModify = (id) => {
-        const BuildingModify = () => {
-        };
-        return (
-            <Button onClick={BuildingModify}>
-                修改分项工程
+            <Button onClick={() => {
+                navigate(`/uploadrevittoforge/${id}`)
+            }}>
+                上传项目
             </Button>
         )
     }
@@ -70,7 +85,6 @@ export default function buildingsTableData(buildings) {
     }
     const CreateData = (date) => {
         const _data = new Date(date);
-        console.log(date)
         return (
             `${_data.getFullYear()}年:${_data.getMonth()}月:${_data.getDay()}日`
         )
@@ -86,27 +100,44 @@ export default function buildingsTableData(buildings) {
         ],
 
         rows: buildings.map(item => {
-            return {
-                name: <Buildingname name={item.name}/>,
-                type: (
-                    <div>
-                        {item.info.type}
-                    </div>
-                ),
-                buildingenter: (
-                    <div>
-                        <BuildingEnter id={item.id}/>
-                    </div>),
-                buildingmodify: (
-                    <div>
-                        <Building_Modify id={item.id}/>
-                    </div>),
-                createdata: (
-                    <div>
-                        {CreateData(item.createdata)}
-                    </div>
-                )
-            }
+            return (isadmin ? {
+                    name: <Buildingname name={item.name}/>,
+                    type: (
+                        <div>
+                            {item.info.type}
+                        </div>
+                    ),
+                    buildingenter: (
+                        <div>
+                            <BuildingEnter id={item.id}/>
+                        </div>),
+                    buildingmodify: (
+                        <div>
+                            <Building_Modify id={item.id} isactive={item.info.uri_forge}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                } : {
+                    name: <Buildingname name={item.name}/>,
+                    type: (
+                        <div>
+                            {item.info.type}
+                        </div>
+                    ),
+                    buildingenter: (
+                        <div>
+                            <BuildingEnter id={item.id}/>
+                        </div>),
+                    createdata: (
+                        <div>
+                            {CreateData(item.createdata)}
+                        </div>
+                    )
+                }
+            )
         })
 
 

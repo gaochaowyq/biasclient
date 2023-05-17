@@ -1,6 +1,6 @@
 /**
  */
-import {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef, useContext} from "react";
 import {useParams} from 'react-router-dom';
 import {styled} from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
@@ -12,10 +12,11 @@ import useToken from "../authentication/sign-in/components/useToken";
 import {fetchBuilding} from "util/bimmanagementAPI/fetchBuildings";
 import BaseViewer from 'layouts/forgemainview/BaseViewer'
 import timercontrol from "./extension/timercontrol";
+import {authContext} from "../../context/AuthContext";
 
 function ConstructManagementViewer() {
     const [viewername, setViewer] = useState("{3D}");
-    const {token, setToken} = useToken();
+    const {token} = useContext(authContext)
     const [controller, dispatch] = useMaterialUIController();
     const [models, setModels] = useState([{name: "", urn: ""}]);
     const forgeToken = useForgeToken();

@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useContext} from "react";
 import SignOut from "layouts/authentication/sign-out";
 import {render} from 'react'
 
@@ -44,14 +44,15 @@ import {
     setMiniSidenav,
     setOpenConfigurator,
 } from "context";
+import {authContext} from "context/AuthContext";
+
 
 function DashboardNavbar({absolute, light, isMini}) {
     const [navbarType, setNavbarType] = useState();
     const [controller, dispatch] = useMaterialUIController();
     const {miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode} = controller;
     const [openMenu, setOpenMenu] = useState(false);
-    const {token,setToken}=useToken()
-    const [user,setUser]=useState({email:"76209609@qq.com"})
+    const {admin}= useContext(authContext)
     const route = useLocation().pathname.split("/").slice(1);
     useEffect(() => {
         // Setting the navbar type
@@ -72,11 +73,6 @@ function DashboardNavbar({absolute, light, isMini}) {
 
         // Call the handleTransparentNavbar function to set the state with the initial value.
         handleTransparentNavbar();
-
-        fetchUserByToken(token).then(res=>{
-            setUser(res)
-        })
-
         // Remove event listener on cleanup
         return () => window.removeEventListener("scroll", handleTransparentNavbar);
     }, [dispatch, fixedNavbar]);
@@ -99,7 +95,7 @@ function DashboardNavbar({absolute, light, isMini}) {
             onClose={handleCloseMenu}
             sx={{mt: 2}}
         >
-            <NotificationItem icon={<Icon>E</Icon>} title={user.email}/>
+            <NotificationItem icon={<Icon>E</Icon>} title={admin.email}/>
             <NotificationItem icon={<Icon>退</Icon>} title="退出" onClick={() => {
             }}/>
         </Menu>
